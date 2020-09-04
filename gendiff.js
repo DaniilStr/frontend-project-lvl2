@@ -3,8 +3,11 @@ import commander from 'commander';
 const program = commander.program;
 
 program
+.description('Compares two configuration files and shows a difference.')
 .version('1.0.0')
-.description('  Compares two configuration files and shows a difference.');
+.helpOption('-h, --help', 'output usage information')
+.arguments('<filepath1> <filepath2>')
+.option('-f, --format [type]',  'output format');
 
 
 program.parse(process.argv);
