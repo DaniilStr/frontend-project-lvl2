@@ -1,6 +1,6 @@
-import * as fs from "fs";
-import * as path from "path";
-import _ from "lodash";
+import * as fs from 'fs';
+import * as path from 'path';
+import _ from 'lodash';
 
 const genDiff = (filepath1, filepath2) => {
   const cwd = process.cwd();
@@ -10,7 +10,7 @@ const genDiff = (filepath1, filepath2) => {
   const obj2 = JSON.parse(file2);
 
   const callBack = (acc, element) => {
-    const [ key, value ] = element;
+    const [key, value] = element;
     if (!_.has(obj2, key)) {
       acc.push(` - ${key}: ${obj1[key]}`);
       return acc;
@@ -23,13 +23,14 @@ const genDiff = (filepath1, filepath2) => {
       acc.push(`   ${key}: ${value}`);
       return acc;
     }
-    if (obj2[key] != obj1[key]) {
+    if (obj2[key] !== obj1[key]) {
       if (!acc.includes(` - ${key}: ${obj1[key]}`)) {
         acc.push(` - ${key}: ${obj1[key]}`);
         acc.push(` + ${key}: ${obj2[key]}`);
       }
       return acc;
     }
+    return acc;
   };
 
   const arr = Object.entries(obj1).concat(Object.entries(obj2)).sort().reduce(callBack, []);
