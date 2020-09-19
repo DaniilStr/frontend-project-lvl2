@@ -35,6 +35,7 @@ const genDiff = (filepath1, filepath2) => {
 
   const arr = Object.entries(obj1).concat(Object.entries(obj2)).sort().reduce(callBack, []);
   const diff = `{\n${_.sortedUniq(arr).join('\n')}\n}`;
+
   return diff;
 };
 export default genDiff;
