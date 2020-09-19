@@ -24,4 +24,6 @@ jobs:
       uses: paambaati/codeclimate-action@v2.6.0
       env:
         CODECLIMAT: ${{ secrets.CODECLIMAT }}
-
+      with:
+        coverageCommand: make test
+        debug: true
