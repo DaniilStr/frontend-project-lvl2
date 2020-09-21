@@ -28,7 +28,9 @@
   },
   "homepage": "https://github.com/DaniilStr/frontend-project-lvl2#readme",
   "dependencies": {
+    "@types/js-yaml": "^3.12.5",
     "commander": "^6.0.0",
+    "js-yaml": "^3.14.0",
     "lodash": "^4.17.20"
   },
   "devDependencies": {
