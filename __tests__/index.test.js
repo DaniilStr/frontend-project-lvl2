@@ -13,5 +13,8 @@ test('genDiff', () => {
   const expected = '{\n - follow: false\n   host: hexlet.io\n - proxy: 123.234.53.22\n - timeout: 50\n + timeout: 20\n + verbose: true\n}';
   expect(genDiff(getFixturePath('jsonFile1.json'), getFixturePath('jsonFile2.json'))).toBe(expected);
   expect(genDiff(getFixturePath('yamlFile1.yml'), getFixturePath('yamlFile2.yml'))).toBe(expected);
+  expect(genDiff(getFixturePath('iniFile1.ini'), getFixturePath('iniFile2.ini'))).toBe(expected);
   expect(genDiff(getFixturePath('jsonFile1.json'), getFixturePath('yamlFile2.yml'))).toBe(expected);
+  expect(genDiff(getFixturePath('jsonFile1.json'), getFixturePath('iniFile2.ini'))).toBe(expected);
+  expect(genDiff(getFixturePath('yamlFile1.yml'), getFixturePath('iniFile2.ini'))).toBe(expected);
 });
