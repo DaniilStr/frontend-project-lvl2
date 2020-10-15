@@ -3,9 +3,9 @@ import plain from './plain.js';
 import json from './json.js';
 
 const renders = {
-    stylish: stylish,
-    plain: plain,
-    json: json,
+  stylish,
+  plain,
+  json,
 };
 
 export default (ast, format = 'stylish') => renders[format](ast);

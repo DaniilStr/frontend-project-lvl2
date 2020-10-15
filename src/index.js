@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import parser from './parsers.js';
 import genAst from './genAst.js';
 import render from './formatters/index.js';

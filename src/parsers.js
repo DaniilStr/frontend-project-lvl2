@@ -19,9 +19,9 @@ const iniParse = (data) => {
 };
 
 const parserMethod = {
-  ".ini": iniParse,
-  ".yml": yaml.safeLoad,
-  ".json": JSON.parse,
+  '.ini': iniParse,
+  '.yml': yaml.safeLoad,
+  '.json': JSON.parse,
 };
 
 export default (filepath) => {
