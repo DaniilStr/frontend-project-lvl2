@@ -11,30 +11,25 @@ const __dirname = dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 const readFile = (filname) => fs.readFileSync(getFixturePath(filname), 'utf-8');
 
-test('StylishFormat', () => {
-  const expected = readFile('resultStylish.txt');
-  expect(genDiff(getFixturePath('before.json'), getFixturePath('after.json'))).toBe(expected);
-  expect(genDiff(getFixturePath('before.json'), getFixturePath('after.yml'))).toBe(expected);
-  expect(genDiff(getFixturePath('before.json'), getFixturePath('after.ini'))).toBe(expected);
-  expect(genDiff(getFixturePath('before.yml'), getFixturePath('after.yml'))).toBe(expected);
-  expect(genDiff(getFixturePath('before.yml'), getFixturePath('after.ini'))).toBe(expected);
-  expect(genDiff(getFixturePath('before.ini'), getFixturePath('after.ini'))).toBe(expected);
-});
-test('PlainFormat', () => {
-  const expected = readFile('resultPlain.txt');
-  expect(genDiff(getFixturePath('before.json'), getFixturePath('after.json'), 'plain')).toBe(expected);
-  expect(genDiff(getFixturePath('before.json'), getFixturePath('after.yml'), 'plain')).toBe(expected);
-  expect(genDiff(getFixturePath('before.json'), getFixturePath('after.ini'), 'plain')).toBe(expected);
-  expect(genDiff(getFixturePath('before.yml'), getFixturePath('after.yml'), 'plain')).toBe(expected);
-  expect(genDiff(getFixturePath('before.yml'), getFixturePath('after.ini'), 'plain')).toBe(expected);
-  expect(genDiff(getFixturePath('before.ini'), getFixturePath('after.ini'), 'plain')).toBe(expected);
-});
-test('JsonFormat', () => {
-  const expected = readFile('resultJson.txt');
-  expect(genDiff(getFixturePath('before.json'), getFixturePath('after.json'), 'json')).toBe(expected);
-  expect(genDiff(getFixturePath('before.json'), getFixturePath('after.yml'), 'json')).toBe(expected);
-  expect(genDiff(getFixturePath('before.json'), getFixturePath('after.ini'), 'json')).toBe(expected);
-  expect(genDiff(getFixturePath('before.yml'), getFixturePath('after.yml'), 'json')).toBe(expected);
-  expect(genDiff(getFixturePath('before.yml'), getFixturePath('after.ini'), 'json')).toBe(expected);
-  expect(genDiff(getFixturePath('before.ini'), getFixturePath('after.ini'), 'json')).toBe(expected);
+describe('', () => {
+  const expected1 = readFile('resultStylish.txt');
+  const expected2 = readFile('resultPlain.txt');
+  const expected3 = readFile('resultJson.txt');
+
+  const file1_json = getFixturePath('file1.json');
+  const file1_yml = getFixturePath('file1.yml');
+  const file1_ini = getFixturePath('file1.ini');
+
+  const file2_json = getFixturePath('file2.json');
+  const file2_yml = getFixturePath('file2.yml');
+  const file2_ini = getFixturePath('file2.ini');
+
+  test.each`
+    a                    | b             | c             | d            | e
+    ${'isStylishFormat'} | ${file1_json} | ${file2_json} | ${'stylish'} | ${expected1}
+    ${'isPlainFormat'}   | ${file1_yml}  | ${file2_yml}  | ${'plain'}   | ${expected2}
+    ${'isJsonFormat'}    | ${file1_ini}  | ${file2_ini}  | ${'json'}    | ${expected3}
+  `(`$a`, ({b, c, d, e}) => {
+    expect(genDiff(b, c, d)).toBe(e);
+  });
 });

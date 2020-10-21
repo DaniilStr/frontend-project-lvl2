@@ -1,8 +1,6 @@
 import _ from 'lodash';
 import yaml from 'js-yaml';
 import ini from 'ini';
-import * as fs from 'fs';
-import * as path from 'path';
 
 const isNumber = (data) => !Number.isNaN(parseFloat(data));
 
@@ -24,8 +22,6 @@ const parserMethod = {
   '.json': JSON.parse,
 };
 
-export default (filepath) => {
-  const cwd = process.cwd();
-  const format = path.extname(filepath);
-  return parserMethod[format](fs.readFileSync(path.resolve(cwd, path.relative(cwd, filepath)), 'utf-8'));
+export default (data, format) => {
+  return parserMethod[format](data);
 };

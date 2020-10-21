@@ -2,20 +2,21 @@ import _ from 'lodash';
 
 const tab = (depth = 0) => '  '.repeat(depth);
 
-const objToString = (obj, depth = 0) => `{\n${_.keys(obj).map((key) => {
-  if (_.isObject(obj[key])) {
-    return `${tab(depth + 3)}${key}: ${objToString(obj[key], depth + 2)}`;
+const valueToString = (value, depth = 0) => {
+  if (!_.isObject(value)) return value;
+  return `{\n${_.keys(value).map((key) => {
+  if (_.isObject(value[key])) {
+    return `${tab(depth + 3)}${key}: ${valueToString(value[key], depth + 2)}`;
   }
-  return `${tab(depth + 3)}${key}: ${obj[key]}`;
-}).join('\n')}\n${tab(depth + 1)}}`;
+  return `${tab(depth + 3)}${key}: ${value[key]}`;
+}).join('\n')}\n${tab(depth + 1)}}`};
 
-const stringify = (value, depth) => (_.isObject(value) ? objToString(value, depth) : value);
-const toStringAction = (key, value, depth, sign) => `${tab(depth)}${sign} ${key}: ${stringify(value, depth)}`;
+const toStringAction = (key, value, depth, sign) => `${tab(depth)}${sign} ${key}: ${valueToString(value, depth)}`;
 
-const stylish = (ast, level = 1) => {
+const stylish = (ast) => {
   const propertyActions = {
-    parent: (node, depth) => `${tab(depth + 1)}${node.key}: ${stylish(node.children, depth + 2)}`,
-    unchanged: (node, depth) => `${tab(depth + 1)}${node.key}: ${stringify(node.value, depth)}`,
+    parent: (node, depth) => `${tab(depth + 1)}${node.key}: ${iter(node.children, depth + 2)}`,
+    unchanged: (node, depth) => `${tab(depth + 1)}${node.key}: ${valueToString(node.value, depth)}`,
     added: (node, depth) => toStringAction(node.key, node.value, depth, '+'),
     removed: (node, depth) => toStringAction(node.key, node.value, depth, '-'),
     changed: (node, depth) => {
@@ -24,7 +25,10 @@ const stylish = (ast, level = 1) => {
       return [before, after];
     },
   };
-  return `{\n${ast.flatMap((obj) => propertyActions[obj.type](obj, level)).join('\n')}\n${tab(level - 1)}}`;
+  const iter = (coll, level = 1) => {
+    return `{\n${coll.flatMap((obj) => propertyActions[obj.type](obj, level)).join('\n')}\n${tab(level - 1)}}`;
+  }
+  return iter(ast);
 };
 
 export default stylish;

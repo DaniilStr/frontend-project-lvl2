@@ -1,11 +1,11 @@
-import stylish from './stylish.js';
-import plain from './plain.js';
-import json from './json.js';
+import formatStylish from './stylish.js';
+import formatPlain from './plain.js';
+import formatJSON from './json.js';
 
 const renders = {
-  stylish,
-  plain,
-  json,
+  stylish: formatStylish,
+  plain: formatPlain,
+  json: formatJSON,
 };
 
 export default (ast, format = 'stylish') => renders[format](ast);
