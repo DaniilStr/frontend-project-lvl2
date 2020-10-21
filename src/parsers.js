@@ -22,6 +22,4 @@ const parserMethod = {
   '.json': JSON.parse,
 };
 
-export default (data, format) => {
-  return parserMethod[format](data);
-};
+export default (data, format) => parserMethod[format](data);
