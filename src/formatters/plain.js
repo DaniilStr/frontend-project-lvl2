@@ -1,22 +1,42 @@
 import _ from 'lodash';
 
 const stringify = (value) => {
-  if (_.isObject(value)) return '[complex value]';
-  if (typeof value === 'boolean' || typeof value === 'number') return value;
-  return `'${value}'`;
+  let newValue = null;
+  switch (true) {
+    case _.isObject(value):
+      newValue = '[complex value]';
+      break;
+    case typeof value === 'string':
+      newValue = `'${value}'`;
+      break;
+    default:
+      newValue = value;
+  }
+  return newValue;
+};
+
+const propertyActions = {
+  parent: (node, pathStorage, f) => {
+    const newPathStorage = [...pathStorage, node.key];
+    return f(node.children, newPathStorage);
+  },
+  unchanged: () => [],
+  added: (node, pathStorage) => {
+    const newPathStorage = [...pathStorage, node.key];
+    return `Property '${newPathStorage.join('.')}' was added with value: ${stringify(node.value)}`;
+  },
+  removed: (node, pathStorage) => {
+    const newPathStorage = [...pathStorage, node.key];
+    return `Property '${newPathStorage.join('.')}' was removed`;
+  },
+  changed: (node, pathStorage) => {
+    const newPathStorage = [...pathStorage, node.key];
+    return `Property '${newPathStorage.join('.')}' was updated. From ${stringify(node.value1)} to ${stringify(node.value2)}`;
+  },
 };
 
 const plain = (ast) => {
-  const iter = (coll, arr = []) => {
-    const propertyActions = {
-      parent: (node, acc) => iter(node.children, [`${acc}${node.key}.`]),
-      unchanged: () => [],
-      added: (node, acc) => [`Property '${acc}${node.key}' was added with value: ${stringify(node.value)}`],
-      removed: (node, acc) => [`Property '${acc}${node.key}' was removed`],
-      changed: (node, acc) => [`Property '${acc}${node.key}' was updated. From ${stringify(node.oldValue)} to ${stringify(node.newValue)}`],
-    };
-    return coll.flatMap((obj) => propertyActions[obj.type](obj, arr)).join('\n');
-  };
+  const iter = (nodes, path = []) => nodes.flatMap((obj) => propertyActions[obj.type](obj, path, iter)).join('\n');
   return iter(ast);
 };
 

@@ -2,34 +2,30 @@ import _ from 'lodash';
 
 const tab = (depth = 0) => '  '.repeat(depth);
 
-const valueToString = (value, depth = 0) => {
-  if (!_.isObject(value)) return value;
-  return `{\n${_.keys(value).map((key) => {
-    if (_.isObject(value[key])) {
-      return `${tab(depth + 3)}${key}: ${valueToString(value[key], depth + 2)}`;
-    }
-    return `${tab(depth + 3)}${key}: ${value[key]}`;
-  }).join('\n')}\n${tab(depth + 1)}}`;
+const valueToString = (prop, depth = 0, actions) => {
+  if (!_.isObject(prop)) return prop;
+  return `{\n${Object.entries(prop)
+    .map(([key, value]) => actions.unchanged({ key, value }, depth + 2))
+    .join('\n')}\n${tab(depth + 1)}}`;
 };
 
-const toStringAction = (key, value, depth, sign) => `${tab(depth)}${sign} ${key}: ${valueToString(value, depth)}`;
+const propertyActions = {
+  parent: (node, depth, f) => `${tab(depth + 1)}${node.key}: ${f(node.children, depth + 2)}`,
+  unchanged: (node, depth) => `${tab(depth + 1)}${node.key}: ${valueToString(node.value, depth, propertyActions)}`,
+  added: (node, depth, f, f2) => f2(node.key, node.value, depth, '+'),
+  removed: (node, depth, f, f2) => f2(node.key, node.value, depth, '-'),
+  changed: (node, depth, f, f2) => {
+    const before = f2(node.key, node.value1, depth, '-');
+    const after = f2(node.key, node.value2, depth, '+');
+    return [before, after];
+  },
+};
+
+const toStringAction = (key, value, depth, sign) => `${tab(depth)}${sign} ${key}: ${valueToString(value, depth, propertyActions)}`;
 
 const stylish = (ast) => {
-  const iter = (coll, level = 1) => {
-    const propertyActions = {
-      parent: (node, depth) => `${tab(depth + 1)}${node.key}: ${iter(node.children, depth + 2)}`,
-      unchanged: (node, depth) => `${tab(depth + 1)}${node.key}: ${valueToString(node.value, depth)}`,
-      added: (node, depth) => toStringAction(node.key, node.value, depth, '+'),
-      removed: (node, depth) => toStringAction(node.key, node.value, depth, '-'),
-      changed: (node, depth) => {
-        const before = toStringAction(node.key, node.oldValue, depth, '-');
-        const after = toStringAction(node.key, node.newValue, depth, '+');
-        return [before, after];
-      },
-    };
-
-    return `{\n${coll.flatMap((obj) => propertyActions[obj.type](obj, level)).join('\n')}\n${tab(level - 1)}}`;
-  };
+  const iter = (nodes, level = 1) => `{\n${nodes.flatMap((node) => propertyActions[node.type](node, level, iter, toStringAction))
+    .join('\n')}\n${tab(level - 1)}}`;
   return iter(ast);
 };
 
