@@ -14,7 +14,7 @@ const getFormatName = (filepath) => path.extname(filepath).slice(1);
 const genDiff = (filepath1, filepath2, format) => {
   const formatName1 = getFormatName(filepath1);
   const formatName2 = getFormatName(filepath2);
-  
+
   const data1 = readFile(filepath1);
   const data2 = readFile(filepath2);
 
