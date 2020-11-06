@@ -11,15 +11,15 @@ const numberifyValues = (obj) => _.mapValues(obj, (value) => {
   return isNumber(value) ? parseFloat(value) : value;
 });
 
-const iniParse = (data) => {
+const parseIni = (data) => {
   const objectFromIni = ini.parse(data);
   return numberifyValues(objectFromIni);
 };
 
-const parserMethod = {
-  ini: iniParse,
+const parsers = {
+  ini: parseIni,
   yml: yaml.safeLoad,
   json: JSON.parse,
 };
 
-export default (data, format) => parserMethod[format](data);
+export default (data, format) => parsers[format](data);

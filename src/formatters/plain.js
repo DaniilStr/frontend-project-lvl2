@@ -1,43 +1,28 @@
-import _ from 'lodash';
-
 const stringify = (value) => {
-  let newValue = null;
-  switch (true) {
-    case _.isObject(value):
-      newValue = '[complex value]';
-      break;
-    case typeof value === 'string':
-      newValue = `'${value}'`;
-      break;
+  switch (typeof value) {
+    case 'object':
+      return '[complex value]';
+    case 'string':
+      return `'${value}'`;
     default:
-      newValue = value;
+      return value;
   }
-  return newValue;
 };
 
+const getPropertyName = (node, pathStorage) => [...pathStorage, node.key].join('.');
+
 const propertyActions = {
-  parent: (node, pathStorage, f) => {
-    const newPathStorage = [...pathStorage, node.key];
-    return f(node.children, newPathStorage);
-  },
+  parent: (node, pathStorage, iter) => iter(node.children, [...pathStorage, node.key]),
   unchanged: () => [],
-  added: (node, pathStorage) => {
-    const newPathStorage = [...pathStorage, node.key];
-    return `Property '${newPathStorage.join('.')}' was added with value: ${stringify(node.value)}`;
-  },
-  removed: (node, pathStorage) => {
-    const newPathStorage = [...pathStorage, node.key];
-    return `Property '${newPathStorage.join('.')}' was removed`;
-  },
-  changed: (node, pathStorage) => {
-    const newPathStorage = [...pathStorage, node.key];
-    return `Property '${newPathStorage.join('.')}' was updated. From ${stringify(node.value1)} to ${stringify(node.value2)}`;
-  },
+  added: (node, pathStorage) => `Property '${getPropertyName(node, pathStorage)}' was added with value: ${stringify(node.value)}`,
+  removed: (node, pathStorage) => `Property '${getPropertyName(node, pathStorage)}' was removed`,
+  changed: (node, pathStorage) => `Property '${getPropertyName(node, pathStorage)}' was updated. From ${stringify(node.value1)} to ${stringify(node.value2)}`,
 };
 
 const plain = (ast) => {
-  const iter = (nodes, path = []) => nodes.flatMap((obj) => propertyActions[obj.type](obj, path, iter)).join('\n');
-  return iter(ast);
+  const iter = (nodes, path = []) => nodes
+    .flatMap((obj) => propertyActions[obj.type](obj, path, iter));
+  return iter(ast).join('\n');
 };
 
 export default plain;
