@@ -22,7 +22,8 @@ const propertyActions = {
 };
 
 const stylish = (ast) => {
-  const iter = (nodes, depth = 1) => nodes.flatMap((node) => propertyActions[node.type](node, depth, iter))
+  const iter = (nodes, depth = 1) => nodes
+    .flatMap((node) => propertyActions[node.type](node, depth, iter))
     .join('\n');
   return `{\n${iter(ast)}\n}`;
 };
