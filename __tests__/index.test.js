@@ -11,15 +11,10 @@ const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', 
 const readFile = (filname) => fs.readFileSync(getFixturePath(filname), 'utf-8');
 
 describe.each(['json', 'plain', 'stylish'])('output format %s', (outputFormat) => {
-  const dataFormats = {
-    json: 'json',
-    plain: 'ini',
-    stylish: 'yml',
-  };
   const expected = readFile(`${outputFormat}Diff.txt`);
-  test(`data format ${dataFormats[outputFormat]}`, () => {
-    const file1 = getFixturePath(`file1.${dataFormats[outputFormat]}`);
-    const file2 = getFixturePath(`file2.${dataFormats[outputFormat]}`);
+  test.each(['json', 'ini', 'yml'])(`input format %s`, (dataFormat) => {
+    const file1 = getFixturePath(`file1.${dataFormat}`);
+    const file2 = getFixturePath(`file2.${dataFormat}`);
     expect(genDiff(file1, file2, outputFormat)).toBe(expected);
   });
 });
