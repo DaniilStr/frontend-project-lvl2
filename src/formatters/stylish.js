@@ -10,7 +10,7 @@ const valueToString = (prop, depth, actions) => {
 };
 
 const propertyActions = {
-  parent: (node, depth, iter) => `  ${tab(depth)}${node.key}: {\n${iter(node.children, depth + 1)}\n${tab(depth)}  }`,
+  parent: (node, depth, iter) => `${tab(depth)}  ${node.key}: {\n${iter(node.children, depth + 1)}\n${tab(depth)}  }`,
   unchanged: (node, depth) => `${tab(depth)}  ${node.key}: ${valueToString(node.value, depth, propertyActions)}`,
   added: (node, depth) => `${tab(depth)}+ ${node.key}: ${valueToString(node.value, depth, propertyActions)}`,
   removed: (node, depth) => `${tab(depth)}- ${node.key}: ${valueToString(node.value, depth, propertyActions)}`,
