@@ -1,5 +1,7 @@
 const stringify = (value) => {
   switch (typeof value) {
+    case 'null':
+      return 'null';
     case 'object':
       return '[complex value]';
     case 'string':
@@ -21,7 +23,7 @@ const propertyActions = {
 
 const plain = (ast) => {
   const iter = (nodes, path = []) => nodes
-    .flatMap((obj) => propertyActions[obj.type](obj, path, iter));
+    .flatMap((node) => propertyActions[node.type](node, path, iter));
   return iter(ast).join('\n');
 };
 
