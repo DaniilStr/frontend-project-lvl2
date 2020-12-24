@@ -19,7 +19,7 @@ describe.each(['json', 'plain', 'stylish'])('output format %s', (outputFormat) =
   });
 });
 describe('default output format (stylish)', () => {
-  const expected = readFile(`stylishDiff.txt`);
+  const expected = readFile('stylishDiff.txt');
   test.each(['json', 'ini', 'yml'])('input format %s', (dataFormat) => {
     const file1 = getFixturePath(`file1.${dataFormat}`);
     const file2 = getFixturePath(`file2.${dataFormat}`);
